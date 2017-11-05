@@ -32,18 +32,11 @@ struct hw_packet {
     char data[1024];
 };
 
-struct header {
-	unsigned char flag; //4b
-    unsigned char operation; // 8b 
-    unsigned short data_len; // 16b
-    unsigned int seq_num; // 32b
-};
-
 int main(void) {
 	char buf[1024]; //내가 보낸다.
 	char buf_get[1024]; //내가 받는다.
 	char data_str_get[1024]; //내가 받은 내용.
-	int* data_int = (int*)malloc(sizeof(int)); //inc,dec 용도.
+	unsigned int int_data;
 
 	struct sockaddr_in server; //server address
 	int s;
@@ -86,91 +79,84 @@ int main(void) {
 
     
     struct hw_packet bye;
-    //memcpy(&bye, buf_get, sizeof(struct hw_packet));
     int i=0;
     if (buf_get[0] == FLAG_INSTRUCTION) {
     	while(buf_get[0]!=FLAG_TERMINATE) {
     		memcpy(&bye, buf_get, sizeof(struct hw_packet));
+
+    		printf("received instruction message! received data_len : %d bytes\n",bye.data_len);
     		printf("operation type is ");
     		memset(buf, '\0', sizeof(buf));
-    		//unsigned short _seq_num = memcpy(&_seq_num, buf_get.data; sizeof(unsigned short));
-    		//unsigned short _seq_num = ntohs(bye.seq_num);
     		unsigned short _seq_num = bye.seq_num;
-    		//printf("%d\n", _seq_num);
-    		//unsigned short _seq_num;
-    		//memcpy(_seq_num, &bye.seq_num, sizeof(unsigned short));
+    		
     		if (buf_get[1]==OP_ECHO) {
     			struct hw_packet hi;
     			printf("echo.\n");
     			printf("echo : ");
     			printf("%s\n", bye.data);
-    			int data_len = ntohl(*(int *)(buf_get + 4));
-
-    			for (i =0;i<data_len;i++) {
-    				data_str_get[i] = (buf_get + sizeof(struct header))[i];
-    			}
-
+    			
     			hi.flag = FLAG_RESPONSE;
     			hi.operation=OP_ECHO;
-    			//hello.seq_num=htons((unsigned short)_seq_num);
     			hi.seq_num=bye.seq_num;
-    			//printf("%d\n", hello.seq_num);
-    			hi.data_len=htonl(data_len);
-    			memcpy(hi.data, data_str_get,1023);
+    			hi.data_len = bye.data_len;
+
+    			memcpy(hi.data, bye.data, 1023);
     			memcpy(buf, &hi,sizeof(buf));
 
     			send(s, buf, 1023,0);
     			memset(buf, '\0', sizeof(buf));
     		}
+
     		else if (buf_get[1]==OP_INCREMENT) {
     			struct hw_packet hi;
     			printf("increment.\n");
     			printf("increment : ");
-    			printf("%s\n", bye.data);
-    			*data_int = ntohl(*(int *)(buf_get + sizeof(struct header)));
+    			memcpy(&int_data, bye.data, sizeof(unsigned int));
+    			printf("%d\n", int_data);
 
     			hi.flag = FLAG_RESPONSE;
     			hi.operation=OP_ECHO;
-    			//hello.seq_num=htons((unsigned short)_seq_num);
     			hi.seq_num=bye.seq_num;
-    			//printf("%d\n", hello.seq_num);
-    			hi.data_len=htonl(4);
-    			*data_int = *data_int + 1;
-    			*data_int = htonl(*data_int);
-    			//hello.data=data_int;
-    			memcpy(hi.data, data_int,4);
+    			hi.data_len = bye.data_len;
+    			int_data += 1;
+
+    			memcpy(hi.data, &int_data,sizeof(unsigned int));
     			memcpy(buf, &hi,sizeof(buf));
 
     			send(s, buf, 1023,0);
     			memset(buf, '\0', sizeof(buf));
     		}
+
 			else if (buf_get[1]==OP_DECREMENT) {
 				struct hw_packet hi;
 				printf("decrement.\n");
 				printf("decrement : ");
-    			printf("%s\n", bye.data);
-    			*data_int = ntohl(*(int *)(buf_get + sizeof(struct header)));
+    			memcpy(&int_data, bye.data, sizeof(unsigned int));
+    			printf("%d\n", int_data);
 
     			hi.flag = FLAG_RESPONSE;
     			hi.operation=OP_ECHO;
-    			//hello.seq_num=htons((unsigned short)_seq_num);
     			hi.seq_num=bye.seq_num;
-    			//printf("%d\n", hello.seq_num);
-    			hi.data_len=htonl(4);
-    			*data_int = *data_int - 1;
-    			*data_int = htonl(*data_int);
+    			hi.data_len = bye.data_len;
+    			int_data -= 1;
 
-    			memcpy(hi.data, data_int,4);
+    			memcpy(hi.data, &int_data,sizeof(unsigned int));
     			memcpy(buf, &hi,sizeof(buf));
 
     			send(s, buf, 1023,0);
     			memset(buf, '\0', sizeof(buf));
+
     		}
+
     		printf("sent response msg with seq.num. %d to server.\n\n", bye.seq_num);
     		memset(buf_get, '\0', sizeof(buf_get));
-            read(s, buf_get, 1024);
+    		memset(&bye, '\0', sizeof(struct hw_packet));
+
+            recv(s, buf_get,1023,0);
     	}
     }
+
     close(s);
     return 0;
+
 }
