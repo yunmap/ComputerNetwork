@@ -57,7 +57,7 @@ int main(void) {
         exit(1);
     }
 
-	unsigned int value;
+    unsigned int value;
     struct hw_packet hello;
     hello.flag = FLAG_HELLO;
     hello.operation = OP_ECHO;
@@ -67,19 +67,19 @@ int main(void) {
     printf("*** starting ***\n\n");
     memcpy(hello.data, &value, sizeof(unsigned int)); //1111000001000001011011110111100
     memcpy(buf, &hello, sizeof(struct hw_packet));
- 	printf("sending first hello msg...\n");
+    printf("sending first hello msg...\n");
     send(s, buf, 1023,0);
     //printf("%d", hello.data);
     recv(s, buf_get,1023,0); //hello 받고
     printf("received hello message from the server!\n");
-	memset(buf, '\0', sizeof(buf));
-	memset(buf_get, '\0', sizeof(buf));
-	printf("waiting for the first instruction message...\n\n");
+    memset(buf, '\0', sizeof(buf));
+    memset(buf_get, '\0', sizeof(buf));
+    printf("waiting for the first instruction message...\n\n");
     recv(s, buf_get,1023,0); //다음거
 
     
     struct hw_packet bye;
-    int i=0;
+
     if (buf_get[0] == FLAG_INSTRUCTION) {
     	while(buf_get[0]!=FLAG_TERMINATE) {
     		memcpy(&bye, buf_get, sizeof(struct hw_packet));
