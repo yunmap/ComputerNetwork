@@ -154,6 +154,7 @@ int main(void) {
 
             recv(s, buf_get,1023,0);
     	}
+    	printf("received terminate msg! terminating...\n");
     }
 
     close(s);
