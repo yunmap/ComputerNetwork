@@ -76,10 +76,9 @@ int main(void) {
 	memset(buf_get, '\0', sizeof(buf));
 	printf("waiting for the first instruction message...\n\n");
     recv(s, buf_get,1023,0); //다음거
-
     
     struct hw_packet bye;
-    int i=0;
+
     if (buf_get[0] == FLAG_INSTRUCTION) {
     	while(buf_get[0]!=FLAG_TERMINATE) {
     		memcpy(&bye, buf_get, sizeof(struct hw_packet));
@@ -112,7 +111,7 @@ int main(void) {
     			printf("increment.\n");
     			printf("increment : ");
     			memcpy(&int_data, bye.data, sizeof(unsigned int));
-    			printf("%d\n", int_data);
+    			printf("%d\n", int_data+1);
 
     			hi.flag = FLAG_RESPONSE;
     			hi.operation=OP_ECHO;
@@ -132,7 +131,7 @@ int main(void) {
 				printf("decrement.\n");
 				printf("decrement : ");
     			memcpy(&int_data, bye.data, sizeof(unsigned int));
-    			printf("%d\n", int_data);
+    			printf("%d\n", int_data-1);
 
     			hi.flag = FLAG_RESPONSE;
     			hi.operation=OP_ECHO;
