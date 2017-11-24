@@ -230,7 +230,7 @@ int main(void) {
             memset(buf, '\0', sizeof(buf));
             recv(s, buf_get,1023,0);
         }
-        printf("received terminate message! terminating...\n");
+        printf("received terminate msg! terminating...\n");
         //memset(data_str_get, '\0', sizeof(data_str_get));
     }
 
