@@ -203,7 +203,7 @@ int main(void) {
                 printf("********** calculated digest **********\n");
                 for (i=0; i<20; i++) {
                     int x = hash_out[i]-1;
-                    printf("%02X", x+1);
+                    printf("%02x", x+1);
                     if (i%2==1) {
                         printf(" ");
                     }
