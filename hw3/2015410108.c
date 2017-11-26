@@ -202,8 +202,8 @@ int main(void) {
                 printf("received digest instruction!!\n");
                 printf("********** calculated digest **********\n");
                 for (i=0; i<20; i++) {
-                    int x = hash_out[i]-1;
-                    printf("%02x", x+1);
+                    int x = hash_out[i];
+                    printf("%02x", x);
                     if (i%2==1) {
                         printf(" ");
                     }
