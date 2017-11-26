@@ -202,8 +202,8 @@ int main(void) {
                 printf("received digest instruction!!\n");
                 printf("********** calculated digest **********\n");
                 for (i=0; i<20; i++) {
-                    int x = hash_out[i];
-                    printf("%02x", x);
+                    int x = hash_out[i]-1;
+                    printf("%02x", x+1);
                     if (i%2==1) {
                         printf(" ");
                     }
@@ -217,7 +217,7 @@ int main(void) {
                 memcpy(hi.data, &hash_out, sizeof(hash_out));
                 memcpy(buf, &hi, sizeof(hi));
                 //memcpy(buf + sizeof(hash_out), hash_out, 20);
-                //commit 다시
+                
                 send(s, buf, 1023,0);
                 
             }
