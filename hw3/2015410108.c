@@ -217,7 +217,7 @@ int main(void) {
                 memcpy(hi.data, &hash_out, sizeof(hash_out));
                 memcpy(buf, &hi, sizeof(hi));
                 //memcpy(buf + sizeof(hash_out), hash_out, 20);
-                
+                //commit 다시
                 send(s, buf, 1023,0);
                 
             }
